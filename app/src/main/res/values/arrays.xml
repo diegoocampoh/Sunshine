@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="unit_name_array">
+        <item>@string/preferences_unit_metric_system_label</item>
+        <item>@string/preferences_unit_imperial_system_label</item>
+    </string-array>
+    <string-array name="unit_value_array">
+        <item>@string/preferences_unit_metric_system_value</item>
+        <item>@string/preferences_unit_imperial_system_value</item>
+    </string-array>
+</resources>

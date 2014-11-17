@@ -1,9 +1,11 @@
 package com.example.diego.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +44,12 @@ public class ForecastFragment extends Fragment {
 
 
     @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -56,11 +64,20 @@ public class ForecastFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemid = item.getItemId();
         if (itemid == R.id.action_refresh) {
-            new FetchWeatherTask().execute("Montevideo", "json", "metric", "17");
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
 
+    }
+
+    private void updateWeather() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = sharedPref.getString(getString(R.string.preferences_location_key),
+                getString(R.string.preferences_location_value));
+        String unitSystem = sharedPref.getString(getString(R.string.preferences_unit_system_key),
+                getString(R.string.preferences_location_value));
+        new FetchWeatherTask().execute(location, "json", unitSystem, "17");
     }
 
 
@@ -69,14 +86,8 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        //Fake data
-        ArrayList<String> forecast = new ArrayList<String>();
-        forecast.add("Hoy - 20º - despejado y soleado");
-        forecast.add("Mañana - 10º - se entra a complicar macho");
-        forecast.add("Miercoles - 15º - caen pingüinos de punta, a rajar!");
-
         forecastAdapter = new ArrayAdapter<String>(getActivity(),
-                R.layout.list_item_forecast, R.id.list_item_forecast_textview, forecast);
+                R.layout.list_item_forecast, R.id.list_item_forecast_textview, new ArrayList<String>());
         ListView list = (ListView) rootView.findViewById(R.id.listview_forecast);
         list.setAdapter(forecastAdapter);
 
@@ -85,7 +96,7 @@ public class ForecastFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Intent intent = new Intent(getActivity(), forecastDetail.class);
+                Intent intent = new Intent(getActivity(), ForecastDetail.class);
                 intent.putExtra("data", forecastAdapter.getItem(position));
                 startActivity(intent);
             }
