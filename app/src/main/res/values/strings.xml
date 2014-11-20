@@ -23,4 +23,9 @@
     <string name="preferences_unit_imperial_system_value" translatable="false">imperial</string>
     <string name="share_button_label">Share</string>
 
+
+    <!-- Database names-->
+
+    <string name="weatherDatabaseName">weather.db</string>
+
 </resources>
