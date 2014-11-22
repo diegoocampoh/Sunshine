@@ -50,8 +50,8 @@ public class WeatherContract {
         public static final String COLUMN_CITY_NAME = "city_name";
 
         //Coordinates
-        public static final String COLUMN_LAT = "min";
-        public static final String COLUMN_LON = "max";
+        public static final String COLUMN_LAT = "lat";
+        public static final String COLUMN_LON = "lon";
 
 
     }
