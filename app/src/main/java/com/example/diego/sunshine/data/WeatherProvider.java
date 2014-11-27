@@ -211,14 +211,37 @@ public class WeatherProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        if (nRowsAffected > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return nRowsAffected;
 
     }
 
     @Override
     public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
-        return 0;
+
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int nRowsAffected = 0;
+
+        switch (match) {
+            case WEATHER: {
+                nRowsAffected = db.update(WeatherEntry.TABLE_NAME, contentValues, selection, selectionArgs);
+                break;
+            }
+            case LOCATION: {
+                nRowsAffected = db.update(LocationEntry.TABLE_NAME, contentValues, selection, selectionArgs);
+                break;
+            }
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if (nRowsAffected > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return nRowsAffected;
     }
 
 

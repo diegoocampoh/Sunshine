@@ -10,7 +10,6 @@ import android.test.AndroidTestCase;
 
 import com.example.diego.sunshine.data.WeatherContract.LocationEntry;
 import com.example.diego.sunshine.data.WeatherContract.WeatherEntry;
-import com.example.diego.sunshine.data.WeatherDbHelper;
 
 /**
  * Created by diego on 21/11/14.
@@ -21,12 +20,6 @@ public class TestProvider extends AndroidTestCase {
 
     static public String TEST_DATE = "20141205";
     static public String TEST_LOCATION = "99705";
-
-
-    public void testDeleteDb() throws Throwable {
-        mContext.deleteDatabase(WeatherDbHelper.DATABASE_NAME);
-    }
-
 
     public void testGetType() {
         // content://com.example.android.sunshine.app/weather/
@@ -232,6 +225,36 @@ public class TestProvider extends AndroidTestCase {
         for (String key : source.keySet()) {
             destination.put(key, source.getAsString(key));
         }
+    }
+
+    public void testDeleteAllRecords() {
+
+
+        mContext.getContentResolver().delete(WeatherEntry.CONTENT_URI, null, null);
+        mContext.getContentResolver().delete(LocationEntry.CONTENT_URI, null, null);
+
+        Cursor weatherCursor = mContext.getContentResolver().query(
+                WeatherEntry.CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+
+        assertEquals(weatherCursor.getCount(), 0);
+        weatherCursor.close();
+
+        Cursor locationCursor = mContext.getContentResolver().query(
+                LocationEntry.CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+
+        assertEquals(locationCursor.getCount(), 0);
+        locationCursor.close();
+
     }
 
 }
