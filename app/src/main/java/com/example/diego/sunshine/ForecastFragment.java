@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.diego.sunshine.data.WeatherContract;
 import com.example.diego.sunshine.data.WeatherContract.LocationEntry;
@@ -38,10 +40,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public static final int COL_WEATHER_MAX_TEMP = 3;
     public static final int COL_WEATHER_MIN_TEMP = 4;
     public static final int COL_LOCATION_SETTING = 5;
-    private static final int FORECAST_LOADER = 0;
+    public static final int FORECAST_LOADER = 0;
     // For the forecast view we're showing only a small subset of the stored data.
     // Specify the columns we need.
-    private static final String[] FORECAST_COLUMNS = {
+    public static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
             // the content provider joins the location & weather tables in the background
             // (both have an _id column)
@@ -56,7 +58,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             LocationEntry.COLUMN_LOCATION_SETTING
     };
     private String mLocation;
-    private ArrayAdapter<String> forecastAdapter;
+    private ForecastAdapter forecastAdapter;
 
     public ForecastFragment() {
     }
@@ -70,7 +72,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onStart() {
         super.onStart();
-        updateWeather();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mLocation != null && !mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
+            getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+        }
     }
 
     @Override
@@ -96,7 +105,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     private void updateWeather() {
-        new FetchWeatherTask(getActivity(), forecastAdapter).execute(Utility.getPreferredLocation(getActivity()));
+        new FetchWeatherTask(getActivity()).execute(Utility.getPreferredLocation(getActivity()));
     }
 
 
@@ -105,8 +114,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        forecastAdapter = new ArrayAdapter<String>(getActivity(),
-                R.layout.list_item_forecast, R.id.list_item_forecast_textview, new ArrayList<String>());
+        // The SimpleCursorAdapter will take data from the database through the
+        // Loader and use it to populate the ListView it's attached to.
+        forecastAdapter = new ForecastAdapter(getActivity(), null, 0);
+
         ListView list = (ListView) rootView.findViewById(R.id.listview_forecast);
         list.setAdapter(forecastAdapter);
 
@@ -114,9 +125,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                boolean isMetric = Utility.isMetric(parent.getContext());
+                ForecastAdapter adapter = (ForecastAdapter) parent.getAdapter();
+                Cursor cursor = adapter.getCursor();
 
                 Intent intent = new Intent(getActivity(), ForecastDetail.class);
-                intent.putExtra("data", forecastAdapter.getItem(position));
+                intent.putExtra(Intent.EXTRA_TEXT, cursor.getString(COL_WEATHER_DATE));
                 startActivity(intent);
             }
         });
@@ -157,12 +171,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-
+        forecastAdapter.swapCursor(cursor);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
+        forecastAdapter.swapCursor(null);
     }
 }
 
