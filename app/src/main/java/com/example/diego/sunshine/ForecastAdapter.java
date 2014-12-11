@@ -1,12 +1,11 @@
 package com.example.diego.sunshine;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.ImageView;
 
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
@@ -18,6 +17,10 @@ public class ForecastAdapter extends CursorAdapter {
     private static final int VIEW_TYPE_FUTURE_DAY = 1;
     private static final int VIEW_TYPE_COUNT = 2;
 
+    public ForecastAdapter(Context context, Cursor c, int flags) {
+        super(context, c, flags);
+    }
+
     @Override
     public int getItemViewType(int position) {
         return position == 0 ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
@@ -26,10 +29,6 @@ public class ForecastAdapter extends CursorAdapter {
     @Override
     public int getViewTypeCount() {
         return VIEW_TYPE_COUNT;
-    }
-
-    public ForecastAdapter(Context context, Cursor c, int flags) {
-        super(context, c, flags);
     }
 
     @Override
@@ -57,10 +56,18 @@ public class ForecastAdapter extends CursorAdapter {
 
         // Read weather icon ID from cursor
         ViewHolder viewHolder = (ViewHolder) view.getTag();
-        int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_ID);
+        int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_ICON_ID);
         // Use placeholder image for now
+        int viewType = getItemViewType(cursor.getPosition());
+        switch (viewType) {
+            case VIEW_TYPE_TODAY:
+                viewHolder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+                break;
+            case VIEW_TYPE_FUTURE_DAY:
+                viewHolder.iconView.setImageResource(Utility.getIconResourceForWeatherCondition(weatherId));
+                break;
+        }
 
-        viewHolder.iconView.setImageResource(R.drawable.ic_launcher);
 
         // Read date from cursor
         String dateString = cursor.getString(ForecastFragment.COL_WEATHER_DATE);
