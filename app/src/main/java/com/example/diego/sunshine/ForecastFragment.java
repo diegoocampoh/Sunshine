@@ -1,6 +1,5 @@
 package com.example.diego.sunshine;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -55,6 +54,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             LocationEntry.COLUMN_LOCATION_SETTING,
             WeatherEntry.COLUMN_WEATHER_ID,
     };
+    private static final String SELECTED_POSITION_KEY = "SELECTED_ITEM";
+    private int mSelectedPosition = ListView.INVALID_POSITION;
+    private ListView mListView;
     private String mLocation;
     private ForecastAdapter forecastAdapter;
 
@@ -107,34 +109,43 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         new FetchWeatherTask(getActivity()).execute(Utility.getPreferredLocation(getActivity()));
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // The SimpleCursorAdapter will take data from the database through the
         // Loader and use it to populate the ListView it's attached to.
         forecastAdapter = new ForecastAdapter(getActivity(), null, 0);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        ListView list = (ListView) rootView.findViewById(R.id.listview_forecast);
-        list.setAdapter(forecastAdapter);
+        mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        mListView.setAdapter(forecastAdapter);
+
 
         //onListItemClick
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 boolean isMetric = Utility.isMetric(parent.getContext());
                 ForecastAdapter adapter = (ForecastAdapter) parent.getAdapter();
                 Cursor cursor = adapter.getCursor();
+                String date = cursor.getString(COL_WEATHER_DATE);
 
-                Intent intent = new Intent(getActivity(), ForecastDetail.class);
-                intent.putExtra(Intent.EXTRA_TEXT, cursor.getString(COL_WEATHER_DATE));
-                startActivity(intent);
+                mSelectedPosition = cursor.getPosition();
+
+                ((Callback) getActivity()).onItemSelected(date);
+
+//
+//                Intent intent = new Intent(getActivity(), ForecastDetail.class);
+//                intent.putExtra(Intent.EXTRA_TEXT, date);
+//                startActivity(intent);
             }
         });
 
 
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_POSITION_KEY)) {
+            mSelectedPosition = savedInstanceState.getInt(SELECTED_POSITION_KEY);
+        }
+
         return rootView;
     }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -168,11 +179,34 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         forecastAdapter.swapCursor(cursor);
+        if (mSelectedPosition != ListView.INVALID_POSITION) {
+            mListView.setSelection(mSelectedPosition);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         forecastAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mSelectedPosition != ListView.INVALID_POSITION) {
+            outState.putInt(SELECTED_POSITION_KEY, mSelectedPosition);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * Callback for when an item has been selected.
+         */
+        public void onItemSelected(String date);
     }
 }
 

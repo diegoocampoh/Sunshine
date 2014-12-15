@@ -1,5 +1,8 @@
 package com.example.diego.sunshine;
 
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -20,6 +23,7 @@ public class SettingsActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
 
     private boolean mBindingPreference;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +60,7 @@ public class SettingsActivity extends PreferenceActivity
         String stringValue = value.toString();
 
         // are we starting the preference activity?
-        if ( !mBindingPreference ) {
+        if (!mBindingPreference) {
             if (preference.getKey().equals(getString(R.string.preferences_location_key))) {
                 FetchWeatherTask weatherTask = new FetchWeatherTask(this);
                 String location = value.toString();
@@ -80,6 +84,12 @@ public class SettingsActivity extends PreferenceActivity
             preference.setSummary(stringValue);
         }
         return true;
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    public Intent getParentActivityIntent() {
+        return super.getParentActivityIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     }
 
 }

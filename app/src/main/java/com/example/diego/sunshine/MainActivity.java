@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private boolean mTwoPane;
@@ -116,5 +116,28 @@ public class MainActivity extends ActionBarActivity {
         } else {
             Log.d(LOG_TAG, "Could load implicit action view intent for URI:" + geoLocation.toString());
         }
+    }
+
+    @Override
+    public void onItemSelected(String date) {
+        if (mTwoPane) {
+            Bundle args = new Bundle();
+            args.putString(ForecastDetail.DATE_KEY, date);
+
+            DetailFragment detailFragment = new DetailFragment();
+            detailFragment.setArguments(args);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.weather_detail_container, detailFragment)
+                    .commit();
+
+        } else {
+            Intent intent = new Intent(this, ForecastDetail.class);
+            intent.putExtra(ForecastDetail.DATE_KEY, date);
+            startActivity(intent);
+        }
+
+
     }
 }
