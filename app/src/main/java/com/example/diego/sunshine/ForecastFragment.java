@@ -84,6 +84,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -108,14 +109,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // The SimpleCursorAdapter will take data from the database through the
         // Loader and use it to populate the ListView it's attached to.
         forecastAdapter = new ForecastAdapter(getActivity(), null, 0);
-
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView list = (ListView) rootView.findViewById(R.id.listview_forecast);
         list.setAdapter(forecastAdapter);
 

@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_forecast"
     android:name="com.example.diego.sunshine.ForecastFragment"
@@ -7,5 +7,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     tools:context="com.example.diego.sunshine.ForecastFragment"
-    tools:ignore="MergeRootFrame" />
+    tools:layout="@android:layout/list_content"/>
 
