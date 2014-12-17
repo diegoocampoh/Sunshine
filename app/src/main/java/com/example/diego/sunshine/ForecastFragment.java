@@ -59,6 +59,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private ListView mListView;
     private String mLocation;
     private ForecastAdapter forecastAdapter;
+    private boolean mUseTodayLayout;
 
     public ForecastFragment() {
     }
@@ -207,6 +208,18 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
          * Callback for when an item has been selected.
          */
         public void onItemSelected(String date);
+    }
+
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
+        if (forecastAdapter != null) {
+            forecastAdapter.setmUseTodayLayout(mUseTodayLayout);
+        }
+    }
+
+    public boolean ismUseTodayLayout() {
+        return mUseTodayLayout;
     }
 }
 
