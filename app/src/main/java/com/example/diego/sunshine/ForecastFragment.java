@@ -115,6 +115,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // The SimpleCursorAdapter will take data from the database through the
         // Loader and use it to populate the ListView it's attached to.
         forecastAdapter = new ForecastAdapter(getActivity(), null, 0);
+        forecastAdapter.setmUseTodayLayout(mUseTodayLayout);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mListView.setAdapter(forecastAdapter);
@@ -198,6 +199,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         super.onSaveInstanceState(outState);
     }
 
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
+        if (forecastAdapter != null) {
+            forecastAdapter.setmUseTodayLayout(mUseTodayLayout);
+        }
+    }
+
+    public boolean ismUseTodayLayout() {
+        return mUseTodayLayout;
+    }
+
     /**
      * A callback interface that all activities containing this fragment must
      * implement. This mechanism allows activities to be notified of item
@@ -208,18 +220,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
          * Callback for when an item has been selected.
          */
         public void onItemSelected(String date);
-    }
-
-
-    public void setUseTodayLayout(boolean useTodayLayout) {
-        mUseTodayLayout = useTodayLayout;
-        if (forecastAdapter != null) {
-            forecastAdapter.setmUseTodayLayout(mUseTodayLayout);
-        }
-    }
-
-    public boolean ismUseTodayLayout() {
-        return mUseTodayLayout;
     }
 }
 
