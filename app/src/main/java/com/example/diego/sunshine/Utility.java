@@ -18,6 +18,7 @@ package com.example.diego.sunshine;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.example.diego.sunshine.data.WeatherContract;
 
@@ -279,5 +280,36 @@ public class Utility {
         }
         return -1;
     }
+
+    /**
+     * Prepare the weather high/lows for presentation.
+     */
+    public String formatHighLows(Context context, double high, double low) {
+        // Data is fetched in Celsius by default.
+        // If user prefers to see in Fahrenheit, convert the values here.
+        // We do this rather than fetching in Fahrenheit so that the user can
+        // change this option without us having to re-fetch the data once
+        // we start storing the values in a database.
+        SharedPreferences sharedPrefs =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        String unitType = sharedPrefs.getString(
+                context.getString(R.string.preferences_unit_system_key),
+                context.getString(R.string.preferences_unit_metric_system_value));
+
+        if (unitType.equals(context.getString(R.string.preferences_unit_imperial_system_value))) {
+            high = (high * 1.8) + 32;
+            low = (low * 1.8) + 32;
+        } else if (!unitType.equals(context.getString(R.string.preferences_unit_metric_system_value))) {
+            Log.d(Utility.class.getSimpleName(),"Unit type not found: " + unitType);
+        }
+
+        // For presentation, assume the user doesn't care about tenths of a degree.
+        long roundedHigh = Math.round(high);
+        long roundedLow = Math.round(low);
+
+        String highLowStr = roundedHigh + "/" + roundedLow;
+        return highLowStr;
+    }
+
 
 }

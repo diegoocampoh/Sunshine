@@ -40,6 +40,10 @@
             android:name=".data.WeatherProvider"
             android:authorities="com.example.diego.sunshine" />
 
+
+        <service android:name=".service.SunshineService"/>
+        <receiver android:name=".service.SunshineService$AlarmReceiver"/>
+
     </application>
 
 </manifest>
