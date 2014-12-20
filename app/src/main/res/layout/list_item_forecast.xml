@@ -9,18 +9,20 @@
     android:orientation="horizontal"
     android:padding="16dp">
 
+    <FrameLayout
+        android:layout_width="60dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/list_item_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
 
-    <ImageView
-        android:id="@+id/list_item_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/abc_action_bar_home_description"
-        android:src="@drawable/ic_launcher" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="7"
         android:orientation="vertical"
         android:paddingLeft="16dp">
 
@@ -28,20 +30,24 @@
             android:id="@+id/list_item_date_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
             android:padding="3dp"
-            android:text="Today" />
+            android:text="Today"
+            android:textAppearance="?android:textAppearanceLarge" />
 
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/list_item_forecast_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="3dp" />
+            android:fontFamily="sans-serif-condensed"
+            android:padding="3dp"
+            android:textAppearance="?android:textAppearanceSmall" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
+        android:layout_weight="5"
         android:orientation="vertical">
 
 
@@ -49,19 +55,20 @@
             android:id="@+id/list_item_high_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
             android:padding="3dp"
-            android:text="39" />
+            android:text="39"
+            android:textAppearance="?android:textAppearanceLarge" />
 
 
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/list_item_low_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
             android:padding="3dp"
-            android:text="10" />
-
+            android:text="10"
+            android:textAppearance="?android:textAppearanceSmall" />
 
     </LinearLayout>
-
-
 </LinearLayout>
